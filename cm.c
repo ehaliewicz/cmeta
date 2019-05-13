@@ -112,7 +112,7 @@ void execute_prog(char* prog, int len) {
 
   while(pc < len) {
     opcode op = prog[pc++];
-    //printf("%i: op %s/%s\n", pc-1, opcode_names[op], opcode_long_names[op]);
+    printf("%i: op %s/%s\n", pc-1, opcode_names[op], opcode_long_names[op]);
     switch(op) {
       
     case T: do {
@@ -258,6 +258,7 @@ void execute_prog(char* prog, int len) {
       
     }
   }
+
 }
 
 char* prog = NULL;
@@ -284,51 +285,18 @@ int main(int argc, char** argv) {
   FILE* f = fopen(argv[1], "rb");
   
   // read bytes into buffer until EOF
-  char c = getc(f);
-  while(c != EOF) {
-    add_byte_to_program(c);
-    c = getc(f);
+  uint8_t cnt_low = getc(f);
+  uint8_t cnt_high = getc(f);
+  uint16_t cnt_bytes = (cnt_high << 8 | cnt_low);
+
+  
+  for(int i = 0; i < cnt_bytes; i++) {
+    add_byte_to_program(getc(f));
   }
   
 
   execute_prog(prog, prog_sz);
-  // execute program
-  
-  /*
-  char prog[] = {
-    T, '(',
-    E,
-// num_list: 3
-    J, long_num, 
-    T, ',',
-    I, skip_branch_to_end_num_list,
-// branch to end_num_list: 9
-    B, 12,
-// skip_branch_to_end_num_list
-    S,
-    B, 3, 
-// end_num_list: 12
-    T, ')',
-    E,
-    B, 25, 
     
-//long_num: 17
-    N,
-    T, skip_exit_long_num
-//exit_long_num:
-    B, 23, 
-//skip_exit_long_num:
-    C,
-    B, 17, 
-//end_num: 23
-    O,
-    R
-//exit: 25
-    
-  };
-  
-  execute_prog(prog, sizeof(prog)/sizeof(char));
-  */
   
   return 0;
 }

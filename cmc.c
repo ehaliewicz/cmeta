@@ -152,7 +152,7 @@ void handle_opcode(char op, int output) {
       return;
     }
   }
-
+  
   printf("unexpected opcode '%c'\n", op);
   exit(1);
 }
@@ -172,8 +172,9 @@ int main() {
       while(d != '\n') {
 	consume();
 	d = peek();
+	
       }
-      consume();
+
     } else if (c == '\'') {
       add_char_to_buf('\'');
       consume();
@@ -231,6 +232,12 @@ int main() {
       } else {
 	handle_opcode(c, output);
       }
+    }
+
+    if(output == 0) {
+      // print out length of output in bytes (2 bytes, little endian)
+      printf("%c", cur_addr&0xFF);
+      printf("%c", (cur_addr>>8)&0xFF);
     }
     cur_addr = 0;
 
