@@ -64,6 +64,10 @@ int matches_lit_char(int c) {
   return c == lit_char;
 }
 
+int not_matches_lit_char(int c) {
+  return c != lit_char;
+}
+
 void check_and_consume_inner(int(*chk)(int), int tokenize) {
   skip_whitespace();
   char c = peek_char();
@@ -127,6 +131,17 @@ void execute_prog(char* prog, int len) {
       } while(0);
       break;
 
+    case U: do {
+	char op = prog[pc++];
+	lit_char = op;
+	check_and_tokenize(&not_matches_lit_char);
+	if(!flag) {
+	  sprintf(error_buf, "Expected anything but '%c' but failed.",
+		  lit_char);
+	}
+      } while(0);
+      break;
+      
     case A: do {
 	check_and_tokenize(&isalpha);
 	if(!flag) {

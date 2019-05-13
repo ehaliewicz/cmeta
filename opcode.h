@@ -5,6 +5,7 @@
 // all branch targets are 2 bytes absolute reference, little endian
 
 // T -> Test for literal char
+// U -> Test for not literal char
 // A -> test for Alpha char
 // N -> test for Numeric char
 // J -> jump to subroutine
@@ -24,7 +25,8 @@
 
 
 #define OPCODES								\
-  X(T, "TST") X(A, "ALPH") X(N, "NUM") X(J, "JSR") X(R, "RTS") X(S, "SET") \
+  X(T, "TST") X(U, "UNTST") X(A, "ALPH") X(N, "NUM")			\
+  X(J, "JSR") X(R, "RTS") X(S, "SET")					\
   X(B, "BRA") X(I, "BIF") X(E, "BERR") X(L, "LIT") X(C, "CPY")		\
   X(G, "GENLBL") X(F, "LBL") X(O, "OUT") X(D, "DEL")
 
