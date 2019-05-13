@@ -1,0 +1,104 @@
+	J &ex3_
+	B &halt
+	
+:ex3_
+
+	J &ex3n
+	I &ex3e
+
+	J &ex3m
+	I &ex3e
+
+	J &ex3r
+	I &ex3e
+	E
+
+:ex3r
+	T '$'
+	I &ex3s
+	R
+:ex3s
+	F
+	G 1
+	O
+	J &ex3_
+	L 'I'
+	L ' '
+	G 1
+	O
+	L 'S'
+	O
+:ex3e
+	R
+
+
+
+:ex3n
+	T '('
+	I &ex3z
+	R
+:ex3z
+	J &ex3_
+	E
+	T ')'
+	E
+	R
+
+
+
+:ex3m
+	T '.'
+	I &ex3o
+	R
+:ex3o
+	T 'N'
+	E
+
+	L 'N'
+	O
+	L 'I'
+	L ' '
+	G 1
+	O
+	L 'B'
+	L ' '
+	G 2
+	O
+	
+	G 1
+	F
+	O
+	L 'C'
+	O
+	L 'N'
+	O
+	L 'I'
+	L ' '
+	G 1
+	O
+	L 'S'
+	O
+	
+	G 2
+	F
+	O
+
+	R
+
+
+
+:id__
+	A
+	I &id2_
+	B &idex
+:id2_
+	C
+	A
+	I &id2_
+	N
+	I &id2_
+	S
+:idex
+	R
+	
+:halt
