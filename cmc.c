@@ -164,6 +164,16 @@ int main() {
     char c = peek();
     if(c == EOF) {
       break;
+    } else if (c == ';') {
+      // this is a comment
+      // skip until end of line
+      consume();
+      char d = peek();
+      while(d != '\n') {
+	consume();
+	d = peek();
+      }
+      consume();
     } else if (c == '\'') {
       add_char_to_buf('\'');
       consume();

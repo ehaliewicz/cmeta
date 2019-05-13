@@ -1,3 +1,9 @@
+
+# cmeta virtual machine
+cm
+ # cmeta compiler
+cmc
+
 # Prerequisites
 *.d
 

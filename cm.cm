@@ -1,36 +1,35 @@
 	J &ex3_
 	B &halt
-	
+
+
 :ex3_
+	J &ex3i		; call function to parse identifiers
+	I &ex3e		; if successful, go to end of ex3
+	
+	J &ex3n		; call function to parse nested expressions
+	I &ex3e		; if successful, go to end of ex3
+	
+	J &ex3m		; call function to parse modifiers e.g. .I/.N
+	I &ex3e		; if successful, go to end of ex3
 
-	J &ex3n
-	I &ex3e
+	J &ex3r		; call function to parse repeating expressions e.g. $ e
+	I &ex3e		; if successful, go to end of ex3
+	E 		; if not successful, display error
 
-	J &ex3m
-	I &ex3e
-
-	J &ex3r
-	I &ex3e
-	E
-
-:ex3r
-	T '$'
-	I &ex3s
-	R
-:ex3s
-	F
-	G 1
-	O
-	J &ex3_
-	L 'I'
-	L ' '
-	G 1
-	O
-	L 'S'
-	O
 :ex3e
 	R
 
+
+:ex3i
+	L 'C'
+	L ' '
+	J &id__
+	I &ex3j
+	D
+	R
+:ex3j
+	O
+	R
 
 
 :ex3n
@@ -38,7 +37,7 @@
 	I &ex3z
 	R
 :ex3z
-	J &ex3_
+	J &ex3_		; call ex3_ recursively
 	E
 	T ')'
 	E
@@ -51,9 +50,51 @@
 	I &ex3o
 	R
 :ex3o
+	T 'I'
+	I &ex3p
 	T 'N'
-	E
+	I &ex3q
+	R
 
+:ex3p		; generate code for .I
+	L 'A'
+	O
+	L 'I'
+	L ' '
+	G 1
+	O
+	L 'B'
+	L ' '
+	G 2
+	O
+
+	G 1
+	F
+	O
+	L 'C'
+	O
+	L 'A'
+	O
+	L 'I'
+	L ' '
+	G 1
+	O
+	L 'N'
+	O
+	L 'I'
+	L ' '
+	G 1
+	O
+	L 'S'
+	O
+	
+	G 2
+	F
+	O
+	R
+
+
+:ex3q		; generate code for .N
 	L 'N'
 	O
 	L 'I'
@@ -85,6 +126,23 @@
 
 	R
 
+
+:ex3r
+	T '$'
+	I &ex3s
+	R
+:ex3s
+	F
+	G 1
+	O
+	J &ex3_
+	L 'I'
+	L ' '
+	G 1
+	O
+	L 'S'
+	O
+	R
 
 
 :id__
