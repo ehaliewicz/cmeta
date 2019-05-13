@@ -112,7 +112,7 @@ void execute_prog(char* prog, int len) {
 
   while(pc < len) {
     opcode op = prog[pc++];
-    printf("%i: op %s/%s\n", pc-1, opcode_names[op], opcode_long_names[op]);
+    //printf("%i: op %s/%s\n", pc-1, opcode_names[op], opcode_long_names[op]);
     switch(op) {
       
     case T: do {
