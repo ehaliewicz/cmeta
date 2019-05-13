@@ -1,5 +1,7 @@
-	J &ex3_
+	J &out1
 	B &halt
+
+
 
 
 :ex3_
@@ -14,11 +16,11 @@
 
 	J &ex3r		; call function to parse repeating expressions e.g. $ e
 	I &ex3e		; if successful, go to end of ex3
-	E 		; if not successful, display error
+	 		; if not successful, just return
 
 :ex3e
 	R
-
+	
 
 :ex3i
 	L 'C'
@@ -143,6 +145,75 @@
 	L 'S'
 	O
 	R
+
+	
+:out1
+	J &outt
+	I &ot1e
+	J &outs
+:ot1e
+	R
+	
+	
+:outt
+	T '*'
+	I &ott1
+	R
+:ott1
+	T '1'
+	I &oul1
+	T '2'
+	I &oul2
+	B &ouco
+	
+	
+:oul1	; compile label 1 output
+	L 'G'
+	L ' '
+	L '1'
+	O
+	R
+
+:oul2
+	L 'G'
+	L ' '
+	L '2'
+	O
+	R
+
+:ouco
+	L 'C'
+	O
+	R
+
+
+:outs	
+	T '''
+	I &ots1
+	R
+:ots1
+	L 'C'
+	L ' '
+	L '''
+	O
+
+:ots2
+	U '''
+	I &ots3
+	L 'C'
+	L ' '
+	L '''
+	O
+	R
+	
+:ots3
+	L 'C'
+	L ' '
+	C
+	O
+	B &ots2
+	
+	
 
 
 :id__
