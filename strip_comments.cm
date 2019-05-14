@@ -1,0 +1,37 @@
+	J &prog
+	B &halt
+	
+:prog
+	T 0x0A
+	I &prgo
+
+	T 0xFF
+	I &prge
+	
+	T 0x3B
+	I &prgc
+	
+	U 0x3B
+	E
+	C
+	B &prog
+	
+:prge
+	O
+	R
+	
+:prgo
+	O
+	B &prog
+
+:prgc
+	T 0x0A
+	I &prgo
+	
+	T 0xFF
+	I &prgo
+
+	U 0x0A
+	B &prgc
+	
+:halt

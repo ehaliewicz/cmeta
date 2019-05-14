@@ -28,6 +28,12 @@ void skip_whitespace() {
   }
 }
 
+void skip_whitespace_except(char c) {
+  while(isspace(peek_char())) {
+    if(peek_char() == c) { break; }
+    consume_char();
+  }
+}
 
 char token_buf;
 char* output_buf = NULL;
@@ -69,7 +75,13 @@ int not_matches_lit_char(int c) {
 }
 
 void check_and_consume_inner(int(*chk)(int), int tokenize) {
-  skip_whitespace();
+  if(lit_char == '\n' &&
+     ((chk == &matches_lit_char) || (chk == &not_matches_lit_char))) {
+    // HACK
+    skip_whitespace_except('\n');
+  } else {
+    skip_whitespace();
+  }
   char c = peek_char();
   if(chk(c)) {
     if(tokenize) {
@@ -116,7 +128,9 @@ void execute_prog(char* prog, int len) {
 
   while(pc < len) {
     opcode op = prog[pc++];
-    //printf("%i: op %s/%s\n", pc-1, opcode_names[op], opcode_long_names[op]);
+    #ifdef DEBUG
+    printf("%i: op %s/%s\n", pc-1, opcode_names[op], opcode_long_names[op]);
+    #endif
     switch(op) {
       
     case T: do {

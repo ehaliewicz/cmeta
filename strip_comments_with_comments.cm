@@ -1,0 +1,37 @@
+	J &prog		; call main function
+	B &halt		; branch to end of program afterwards
+
+:prog
+	T 0x0A		; test for newline (this has to come first)
+	I &prgo
+
+	T 0xFF		; check for EOF
+	I &prge		; jump to exit if found
+	
+	T 0x3B		; check for semicolon
+	I &prgc		; branch to comment handler routine if found
+	
+	U 0x3B		; otherwise check for any other non-semicolon character
+	E
+	C
+	B &prog		; and jump back to top of main function
+	
+:prge
+	O		; output anything left over
+	R		; if we got an EOF and jumped here, return to top
+
+:prgo
+	O		; if we got a newline, output line
+	B &prog		; and jump back to top of main function
+
+:prgc
+	T 0x0A		; test for newline (this has to come first)
+	I &prgo		; if we found a newline, jump to output routine
+
+	T 0xFF		; test for eof
+	I &prgo		; if we found eof, jump up to output routine
+	
+	U 0x0A
+	B &prgc		; if we got anything else, jump back to top of comment routine
+	
+:halt

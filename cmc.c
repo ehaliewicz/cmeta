@@ -14,8 +14,9 @@
 :labl -- defines label labl
 
 &labl -- inserts absolute reference to label labl
-T 'c' -- tests for 'c'
+T,C,A,N,etc -- insert opcode value
 
+0x10  -- insert hex value
 
 */
 
@@ -134,9 +135,6 @@ void handle_literal_char(char c, int output) {
   }
 }
 
-void handle_number(char c, int output) {
-  handle_literal_char(c-'0', output);
-}
 
 void handle_opcode(char op, int output) {
 
@@ -157,6 +155,25 @@ void handle_opcode(char op, int output) {
   exit(1);
 }
 
+int ishexdigit(c) {
+  return ((c >= '0' && c <= '9') ||
+	  (c >= 'A' && c <= 'Z') ||
+	  (c >= 'a' && c <= 'z'));
+}
+
+int conv_hex_nibble(c) {
+  if (c >= '0' && c <= '9') {
+    return c - '0';
+  } else if (c >= 'A' && c <= 'Z') {
+    return c - 'A' + 10;
+  } else if (c >= 'a' && c <= 'z') {
+    return c - 'a' + 10;
+  } else {
+    printf("Expected hex digit, got '%c'\n", c);
+    exit(1);
+  }
+}
+
 int main() {
 
   while(1) {
@@ -164,31 +181,8 @@ int main() {
     char c = peek();
     if(c == EOF) {
       break;
-    } else if (c == ';') {
-      // this is a comment
-      // skip until end of line
-      consume();
-      char d = peek();
-      while(d != '\n') {
-	consume();
-	d = peek();
-	
-      }
-
-    } else if (c == '\'') {
-      add_char_to_buf('\'');
-      consume();
-      c = peek();
-      add_char_to_buf(c);
-      consume();
-      c = peek();
-      if(c != '\'') {
-	printf("Unbalanced single quote\n");
-	exit(1);
-      }
-      add_char_to_buf('\'');
-      consume();
-    } else {
+    }
+    else {
       add_char_to_buf(c);
     }
     consume();
@@ -220,15 +214,21 @@ int main() {
 	label_buf[3] = buf[i];
 
 	handle_label_definition(label_buf, output);
-      } else if (c == '\'') {
+      } else if (c == '0') {
 	i++;
-	handle_literal_char(buf[i], output);
-	i++;
-	if(buf[i] != '\'') {
-	  printf("Expected ' but got %c\n", buf[i]);
+	if(buf[i] != 'x') {
+	  printf("Expected 'x' in hex constant, got '%c'\n", buf[i]);
+	  exit(1);
 	}
-      } else if (isdigit(c)) {
-	handle_number(c, output);
+	i++;
+	char h = buf[i++];
+	char l = buf[i];
+	if(!output) {
+	  cur_addr++;
+	} else {
+	  output_byte((conv_hex_nibble(h) << 4) | conv_hex_nibble(l));
+	}
+	      
       } else {
 	handle_opcode(c, output);
       }
@@ -242,8 +242,4 @@ int main() {
     cur_addr = 0;
 
   }
-  
-  
-  
-  
-  }
+}
