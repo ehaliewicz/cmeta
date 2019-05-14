@@ -3,6 +3,8 @@
 cm
  # cmeta compiler
 cmc
+# compiled cmeta files
+*.cs
 
 # Prerequisites
 *.d
