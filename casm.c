@@ -6,7 +6,7 @@
 
 #include "opcode.h"
 
-// stage0 compiler for CMETA ASM
+// assembler for CMETA ASM
 // handles four character labels, single characters and all CMETA opcodes
 
 /* grammar

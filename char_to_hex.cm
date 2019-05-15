@@ -1,0 +1,48 @@
+	J &prog
+	B &halt
+
+	; we don't have to worry about processing comments here
+	; just converting character constants to hex values
+	
+:prog
+	T 0x0A		; check for newline (this must be done first)
+	I &prgo		; if out, jump to output branch to output this line
+
+	T 0xFF		; check for EOF
+	I &prge		; if so, jump to prge (exit branch)
+
+	T 0x27		; check for single quote
+	I &prgq
+
+	U 0x27		; check for anything but quote
+	E
+	C		; copy to output buf
+	B &prog
+	
+:prge
+	O		; output any leftovers
+	R
+:prgo
+	O
+	B &prog
+
+
+:prgq
+	L 0x30		; literal 0
+	L 0x78		; literal x
+	T 0x27		; we have a quote inside quotes
+	I &prqq		; jump to quote handler
+	
+	U 0x27		; match anything but quote
+	H 		; copy it to buffer
+	B &prqf		; jump to finish branch
+	
+:prqq
+	L 0x32		; copy literal quote to output buffer
+	L 0x37
+:prqf
+	T 0x27		; make sure to check for the trailing quote
+	E
+	B &prog		; dont bother outputting immediately 
+	
+:halt

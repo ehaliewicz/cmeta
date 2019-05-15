@@ -233,6 +233,16 @@ void execute_prog(char* prog, int len) {
       } while(0);
       break;
 
+    case H: do {
+	uint8_t l = token_buf%16;
+	uint8_t h = (token_buf/16)%16;
+	char low = (l >= 10) ? ('A' + l-10) : ('0' + l);
+	char high = (h >= 10) ? ('A' + h-10) : ('0' + h);
+	add_char_to_output_buffer(high);
+	add_char_to_output_buffer(low);
+      } while(0);
+      break;
+      
     case F: do {
 	output_col = 0;
       } while(0);

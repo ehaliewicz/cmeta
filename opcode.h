@@ -15,7 +15,8 @@
 // I -> branch If 
 // E -> branch if Error 
 // L -> copy Literal
-// C -> Copy input
+// C -> Copy input char to output buffer
+// H -> copy hex representation of input char to output buffer
 // G -> Generate label
 // F -> Fix left (for labels)
 // O -> Output buffer
@@ -27,7 +28,8 @@
 #define OPCODES								\
   X(T, "TST") X(U, "UNTST") X(A, "ALPH") X(N, "NUM")			\
   X(J, "JSR") X(R, "RTS") X(S, "SET")					\
-  X(B, "BRA") X(I, "BIF") X(E, "BERR") X(L, "LIT") X(C, "CPY")		\
+  X(B, "BRA") X(I, "BIF") X(E, "BERR") X(L, "LIT")			\
+  X(C, "CPY") X(H, "HEXCPY")						\
   X(G, "GENLBL") X(F, "LBL") X(O, "OUT") X(D, "DEL")
 
 typedef enum {
