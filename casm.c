@@ -135,6 +135,13 @@ void handle_literal_char(char c, int output) {
   }
 }
 
+void handle_number(char c, int output) {
+  if(output) {
+    output_byte(c - '0');
+  } else {
+    cur_addr++;
+  }  
+}
 
 void handle_opcode(char op, int output) {
 
@@ -228,7 +235,8 @@ int main() {
 	} else {
 	  output_byte((conv_hex_nibble(h) << 4) | conv_hex_nibble(l));
 	}
-	      
+      } else if (isdigit(c)) {
+	handle_number(c, output);      
       } else {
 	handle_opcode(c, output);
       }
