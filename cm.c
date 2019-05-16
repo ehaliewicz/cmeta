@@ -128,9 +128,10 @@ void execute_prog(char* prog, int len) {
 
   while(pc < len) {
     opcode op = prog[pc++];
-    #ifdef DEBUG
-    printf("%i: op %s/%s\n", pc-1, opcode_names[op], opcode_long_names[op]);
-    #endif
+#ifdef DEBUG
+    printf("%i: %x/%i\n", pc-1, op, op);
+    printf("-- op: %s/%s\n", opcode_names[op], opcode_long_names[op]);
+#endif
     switch(op) {
       
     case T: do {
@@ -322,6 +323,10 @@ int main(int argc, char** argv) {
   }
   
   FILE* f = fopen(argv[1], "rb");
+  if(!f) {
+    printf("Error opening program file\n");
+    exit(1);
+  }
   
   // read bytes into buffer until EOF
   uint8_t cnt_low = getc(f);

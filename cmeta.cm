@@ -1,0 +1,319 @@
+	J &ex3_	
+	B &halt
+
+
+:ex3_
+
+	; check for literal IDs
+	L 'J'
+	L '&'
+	J &id__ ; check for id
+	I &e3cl ; if found one, go to e3cl (ex3 call)
+	D	; otherwise clear 'J&' from output buffer
+	
+	; check for literal strings
+	; and generate code to match them
+	J &e3st ; check for string
+	I &ex3e ; if found one, jump to ex3e (ex3 exit)
+
+	; check for '.ID', '.NUMBER', '.STRING', '.EMPTY'
+	; and generate call to pregenerated routine to test for those things
+	J &e3dt
+	I &ex3e
+	
+	J &e3ns	; check for nested expressions
+	I &ex3e
+
+	J &e3rp	; check for '$' repeating expressions
+	I &ex3e
+
+	E
+	
+:ex3e
+	R
+
+
+:e3rp
+	T '$'
+	I &e3rc
+	R
+	
+:e3rc	; ex3 repeat continue
+	F
+	G 1
+	O
+	J &ex3_
+	L 'I'
+	G 1
+	O
+	L 'S'
+	O
+	R
+	
+
+:e3ns
+	T '('
+	I &e3nc
+	R
+
+:e3nc	; ex3 nested continue
+	J &ex3_
+	I &e3nd
+	E
+	
+:e3nd	; ex3 nested continue 2 (d->e)
+	T ')'
+	E
+	R
+
+
+:e3dt	; check for '.ID', '.NUMBER', '.STRING', '.EMPTY'
+	T '.'
+	I &e3dc
+	R
+	
+:e3dc	; e3 dot continue
+	T 'I'
+	I &e3di
+	T 'N'
+	I &e3dn
+	T 'S'
+	I &e3ds
+	T 'E'
+	I &e3de
+	E
+	
+:e3di 	; e3 dot ID
+	T 'D'
+	E
+	L 'J'
+	L '&'
+	L '_'
+	L 'i'
+	L 'd'
+	L '_'
+	O
+	R
+	
+:e3dn	; e3 dot NUMBER
+	T 'U'
+	E
+	T 'M'
+	E
+	T 'B'
+	E
+	T 'E'
+	E
+	T 'R'
+	E
+
+	L 'J'
+	L '&'
+	L '_'
+	L 'n'
+	L 'u'
+	L 'm'
+	O
+	R
+	
+	
+:e3ds
+	T 'T'
+	E
+	T 'R'
+	E
+	T 'I'
+	E
+	T 'N'
+	E
+	T 'G'
+	E
+
+	L 'J'
+	L '&'
+	L '_'
+	L 's'
+	L 't'
+	L 'r'
+	O
+	R
+
+:e3de
+	T 'M'
+	E
+	T 'P'
+	E
+	T 'T'
+	E
+	T 'Y'
+	L 'S'
+	O
+	R
+
+
+:e3st
+	T '''
+	I &e3sc
+	R
+:e3sc		; (ex3 string continue)
+	T '''
+	I &e3se
+	L 'U'
+	L '0'
+	L 'x'
+	U '''
+	H
+	O
+	L 'I'
+	G 1	; jump to failure
+	O
+
+:e3sl	; (ex3 string loop)
+	T '''
+	I &e3se
+	L 'T'
+	L '0'
+	L 'x'
+	U '''
+	H
+	O
+	L 'E'
+	O
+	B &e3sl	
+
+
+:e3se	; (ex3 string exit)
+	L 'S'
+	O
+	F
+	G 1	; generate failure label
+	O
+	R
+
+
+:e3cl		; ex3 call
+	O
+	R
+
+
+:id__
+	A
+	I &idct
+	R
+
+:idct	  ; id continue
+	C
+:idlp
+	A
+	I &idct
+	N
+	I &idct
+	S	; if not alpha or numeric, we found the end of the id, so set the flag
+	R	
+	
+
+
+:otck	; outcheck
+
+	T '.'
+	I &outp
+	R
+	
+:outp	; handle output statements
+	; e.g. .OUT('abc')
+	;      .OUT('abc' *)
+	;      .OUT('abc' *1)
+	;      .OUT(*)
+	;      .OUT(*1)
+
+	T 'O'
+	I &outc
+
+	; TODO handle .LABEL
+	T 'L'
+	I &outl
+	R
+
+:outl	; output label expression
+	T 'A'
+	E
+	T 'B'
+	E
+	T 'E'
+	E
+	T 'L'
+	E
+	L 'F'
+	O
+	R
+
+:outc
+	T 'U'
+	E
+	T 'T'
+	E
+	T '('
+
+	; kleene output expressions
+:otsq	; 'output seq'
+	J &otex
+	I &otsq
+
+	T ')'
+	E
+	L 'O'
+	O
+	R
+
+:otex	; output expression
+	T '*'
+	I &otcp
+	
+	T '''
+	I &otst
+	R
+
+:otst	; output string
+  	T '''	 ; empty string, or end of string
+	I &otse
+	U '''
+	L 'L'
+	L '0'
+	L 'x'
+	H
+	O
+	B &otst
+:otse 	; output string exit
+	R
+
+:otcp
+	; we already got a '*'
+	; check for a 1 or 2 right after it
+
+	T '1'
+	I &otl1
+	T '2'
+	I &otl2
+
+	; otherwise, generate code to copy token buffer to output buffer
+	L 'C'
+	O
+	R	; return to right after J &otex in otsq
+
+:otl1
+	; generate code to generate label 1
+	L 'G'
+	L '1'
+	O
+	R	; return to right after J &otex in otsq
+
+:otl2
+	; generate code to generate label 2
+	L 'G'
+	L '2'
+	O
+	R	; return to right after J &otex in otsq
+	
+
+:halt
+	
