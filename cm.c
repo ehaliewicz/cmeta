@@ -129,8 +129,12 @@ void execute_prog(char* prog, int len) {
   while(pc < len) {
     opcode op = prog[pc++];
 #ifdef DEBUG
-    printf("%i: %x/%i\n", pc-1, op, op);
-    printf("-- op: %s/%s\n", opcode_names[op], opcode_long_names[op]);
+    printf("%i/%x: %s/%s", pc-1, pc-1, opcode_names[op], opcode_long_names[op]);
+    if(op == T) {
+      printf(" '%c' f: %i\n", prog[pc], flag);
+    } else {
+      printf(" f: %i\n", flag);
+    }
 #endif
     switch(op) {
       
@@ -211,6 +215,9 @@ void execute_prog(char* prog, int len) {
 	uint8_t tgt_high = prog[pc++];
 	uint16_t tgt = (tgt_high << 8 | tgt_low);
 	if(flag) {
+#ifdef DEBUG
+	  printf("BRANCHED to %i/%x\n", tgt, tgt);
+#endif
 	  pc = tgt;
 	}
       } while(0);

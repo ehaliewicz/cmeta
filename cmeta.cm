@@ -1,7 +1,90 @@
-	J &ex3_	
+	J &ex1_
 	B &halt
+	
+:ex1_
+	; parse ex2
+	
+	J &ex2_
+		; if successful, jump to loop to try to parse alternatives
+	I &ex1s
+		; if failed, jump to end
+	B &ex1e
 
+:ex1d	; prolog to ending
+	L 'E'
+	O
+:ex1e
+	F
+	G 1
+	O
+	R
+	
+:ex1s	; ex1 sequence
+	T '/'
+	I &ex1a		; got alternative
+	S
+	B &ex1d		; otherwise jump to prolog of end of ex1
 
+:ex1a	; ex1a - ex1s got alternative
+	L 'I'
+	G 1
+	O
+	J &ex2_
+	E	; if we couldn't parse a ex2, fail here (we can't have a trailing '/')
+	B &ex1s
+	
+	
+	
+
+:ex2_
+	; parse ex3
+	; if we got ex3, continue
+	; otherwise jump to end of ex2
+		
+	J &ex2f
+	I &ex2s
+	B &ex2e
+
+:ex2f
+	; first part of ex2
+	J &ex3_	     ; try parsing an ex3
+	I &ex2g	     ; if successful jump to return
+	J &outp	     ; if not successful, try to parse an output
+	I &ex2s
+	B &ex2r
+:ex2g
+	L 'I'		; if true, skip jump
+	G 2
+	O
+	L 'B'		; if false jump to the end of generated ex2 code
+	G 1
+	O
+	G 2
+	F
+	O
+	B &ex2s
+:ex2e
+	G 1
+	F
+	O
+:ex2r
+	R	
+
+:ex2s	; second part of ex2
+	; repeatedly parse ex3's or outputs
+	J &ex3_	     ; try to parse an ex3
+	I &ex2t	     ; if successful, jump to branch to emit a E opcode
+	J &outp	     ; if not, check for an output
+	I &ex2s	     ; if successful, jump back to top of ex2s loop
+	S
+	B &ex2e
+
+:ex2t	; continue second part of ex2, if parsed an ex3
+	L 'E'
+	O
+	B &ex2s
+
+	
 :ex3_
 
 	; check for literal IDs
@@ -27,7 +110,7 @@
 	J &e3rp	; check for '$' repeating expressions
 	I &ex3e
 
-	E
+
 	
 :ex3e
 	R
@@ -158,14 +241,21 @@
 :e3sc		; (ex3 string continue)
 	T '''
 	I &e3se
-	L 'U'
+	L 'T'
 	L '0'
 	L 'x'
 	U '''
 	H
 	O
 	L 'I'
-	G 1	; jump to failure
+	G 2	; jump to continue
+	O
+	L 'B'   ; jump to failure
+	G 1
+	O
+
+	F
+	G 2
 	O
 
 :e3sl	; (ex3 string loop)
