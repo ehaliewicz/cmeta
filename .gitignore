@@ -1,8 +1,9 @@
 
 # cmeta virtual machine
 cm
- # cmeta compiler
-cmc
+cm_debug
+ # cmeta assembler
+casm
 # compiled cmeta files
 *.cs
 
